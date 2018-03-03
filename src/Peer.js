@@ -17,21 +17,24 @@ export default class Peer extends Component {
   }
   render() {
     const { name } = this.props
-    return <Marker
-        parameters={{
-          preset: 'hiro'
-        }}
-      >
+    return [
+      <a-assets>
+        <video id="stream" autoplay src="/happy.mp4"></video>
+      </a-assets>,
 
-      <a-image cursor-listener
-        src="/images/warrior.png"
+      <Marker
+          parameters={{
+            preset: 'hiro'
+          }}
         >
-      </a-image>
-      <a-text
-        position="0 1 0"
-        value={name}
-        anchor="left"
-      ></a-text>
-    </Marker>
+
+        <a-video src="#stream" ></a-video>
+        <a-text
+          position="0 1 0"
+          value={name}
+          anchor="left"
+        ></a-text>
+      </Marker>
+    ]
   }
 }
