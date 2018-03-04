@@ -64,6 +64,9 @@ class App extends Component {
           getSceneRef={this.setScene}
           inherent={true}
         >
+          <a-assets>
+            <a-asset-item id="optimerBoldFont" src="https://rawgit.com/mrdoob/three.js/dev/examples/fonts/optimer_bold.typeface.json"></a-asset-item>
+          </a-assets>
           <Call
             ref={this.installRef}
             keyIDs={['hiro', 'kanji']}

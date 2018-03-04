@@ -35,11 +35,12 @@ export default class Peer extends Component {
           ? <a-video rotation="-90 0 0" src={`#${this.streamId}`} />
           : <a-box height={0.2} {...listenerProps}/>
         }
-        <a-text
+
+        <a-entity
           position="0 1 0"
-          value={name}
-          anchor="left"
-        ></a-text>
+          material="color: grey"
+          text-geometry={`value: ${name}; font: #optimerBoldFont`}
+        ></a-entity>
       </Marker>
     ]
   }
