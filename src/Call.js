@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import Peer from 'peerjs';
 
+const peerJSServer = 'ar-hakaton-webrtc.herokuapp.com'
+
 const style = {
   position: 'fixed',
   top: '10px',
@@ -20,7 +22,7 @@ export default class Call extends Component {
     }
   }
   componentDidMount() {
-    this.peer = Peer({key: '1gbqi7p922e7y14i'})
+    this.peer = Peer({host: peerJSServer, port: 443, path: '/', secure: true})
     this.peer.on('error', (err) => {
       alert(err.message);
     });
