@@ -5,29 +5,36 @@ import { AFrameRenderer, Marker } from "react-web-ar";
 
 export default class Peer extends Component {
 
+  constructor(props) {
+    super(props)
+    this.markerName = this.props.marker
+    this.listenerName = `cursor-listener-${this.markerName}`
+    this.streamId = `stream-${this.markerName}`
+  }
+
   componentDidMount() {
-    AFRAME.registerComponent('cursor-listener', {
+    const component = this
+    AFRAME.registerComponent(this.listenerName, {
       init: function() {
         this.el.addEventListener('click', function (evt) {
-          console.log('Clicked!')
+          component.props.callPeer(component.props.name)
         });
       }
     });
   }
   render() {
     const { name, streamVideo } = this.props
+    const listenerProps = {[this.listenerName]: ""}
     return [
       <a-assets>
-        <video id="stream" autoplay src={streamVideo || '/happy.mp4'}></video>
+        <video id={this.streamId} autoplay src={streamVideo}></video>
       </a-assets>,
 
-      <Marker
-          parameters={{
-            preset: 'hiro'
-          }}
-        >
-
-        <a-video rotation="-90 0 0" src="#stream" ></a-video>
+      <Marker parameters={{ preset: this.markerName }} >
+        {streamVideo
+          ? <a-video rotation="-90 0 0" src={`#${this.streamId}`} />
+          : <a-box height={0.2} {...listenerProps}/>
+        }
         <a-text
           position="0 1 0"
           value={name}

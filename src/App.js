@@ -14,7 +14,10 @@ class App extends Component {
     super(props)
     this.state = {
       cameraVideo: null,
-      streamVideo: null
+      streamVideos: {
+        hiro: '',
+        kanji: '',
+      }
     }
   }
 
@@ -36,13 +39,24 @@ class App extends Component {
   setScene = (ref) => {
     this.scene = ref
   }
-  onStream = (streamVideo) => {
-    this.setState( {streamVideo} )
+  onStream = (fromPeerId, streamVideo) => {
+    const streamVideos = {
+      ...this.state.streamVideos,
+      [fromPeerId]: streamVideo
+    }
+    this.setState({ streamVideos })
   }
+  installRef = (ref) => {
+    this.makeCall = ref.makeCall;
+  }
+  callPeer = (peerId) => {
+    console.log(`Call to ${peerId}`)
+    this.makeCall(peerId)
+  }
+  getCamera = () => this.localStream
 
   render() {
-    const getCamera = () => this.localStream
-    const { cameraVideo, streamVideo } = this.state
+    const { cameraVideo, streamVideos } = this.state
     return (
       cameraVideo
       ? <AFrameRenderer
@@ -50,8 +64,24 @@ class App extends Component {
           getSceneRef={this.setScene}
           inherent={true}
         >
-          <Call getCamera={getCamera} onStream={this.onStream}/>
-          <Peer name="Piter" streamVideo={streamVideo} />
+          <Call
+            ref={this.installRef}
+            keyIDs={['hiro', 'kanji']}
+            getCamera={this.getCamera}
+            onStream={this.onStream}
+          />
+          <Peer
+            marker="hiro"
+            name="hiro"
+            streamVideo={streamVideos['hiro']}
+            callPeer={this.callPeer}
+          />
+          <Peer
+            marker="kanji"
+            name="kanji"
+            streamVideo={streamVideos['kanji']}
+            callPeer={this.callPeer}
+          />
           <a-cursor></a-cursor>
         </AFrameRenderer>
       : <div>Waiting for camera access...</div>

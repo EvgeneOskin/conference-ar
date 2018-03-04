@@ -17,14 +17,32 @@ export default class Call extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      peerId: '',
       myPeerId: '',
     }
   }
   componentDidMount() {
-    this.peer = Peer({host: peerJSServer, port: 443, path: '/', secure: true})
+    const { keyIDs } = this.props  // Use fixed ids for debug reasons
+    this.setupPeer(keyIDs[0], keyIDs.slice(1))
+  }
+
+  makeCall = (peerId) => {
+    const localStream = this.props.getCamera()
+    const call = this.peer.call(peerId, localStream);
+
+    call.on('stream', (stream) => {
+      const streamVideo = window.URL.createObjectURL(stream)
+      this.props.onStream(peerId, streamVideo)
+    });
+  }
+
+  setupPeer = async (key, recoveryKeys) => {
+    this.peer = Peer(key, {host: peerJSServer, port: 443, path: '/', secure: true})
     this.peer.on('error', (err) => {
-      alert(err.message);
+      if (recoveryKeys[0]) {
+        this.setupPeer(recoveryKeys[0], recoveryKeys.splice(1))
+      } else {
+        alert(err.message);
+      }
     });
 
     this.peer.on('open', (id) => {
@@ -38,23 +56,11 @@ export default class Call extends Component {
     });
   }
 
-  call = () => {
-    const localStream = this.props.getCamera()
-    const call = this.peer.call(this.state.peerId, localStream);
-
-    call.on('stream', (stream) => {
-      const streamVideo = window.URL.createObjectURL(stream)
-      this.props.onStream(streamVideo)
-    });
-  }
-
   render() {
     const { myPeerId } = this.state
     return (
       <div style={style}>
         <p>Me peer ID: <span>{myPeerId}</span></p>
-        <input onChange={(e) => this.setState({ peerId: e.target.value })} />
-        <button onClick={() => this.call() }>Call</button>
       </div>
     )
   }
