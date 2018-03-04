@@ -38,8 +38,8 @@ export default class Peer extends Component {
 
         <a-entity
           position="0 1 0"
-          material="color: grey"
-          text-geometry={`value: ${name}; font: #optimerBoldFont`}
+          material="color: grey;"
+          text-geometry={`value: ${name}; font: #optimerBoldFont;`}
         ></a-entity>
       </Marker>
     ]
